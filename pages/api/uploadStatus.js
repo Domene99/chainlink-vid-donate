@@ -5,6 +5,10 @@ export default async function handler(req, res) {
   // Extract the id parameter from the query object
   const id = query.id;
 
+  if (id == "") {
+    res.status(200).json({ done: false });
+  }
+
   const options = {
     method: "GET",
     headers: {

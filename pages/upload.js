@@ -33,6 +33,7 @@ export default function Upload({
   ownerAddress,
 }) {
   const [title, setTitle] = useState("Default Title");
+  const [vidId, setVidId] = useState("");
   const [videoFile, setVideoFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [videoUploaded, setVideoUploaded] = useState(false);
@@ -223,7 +224,7 @@ export default function Upload({
     });
   };
 
-  const addVideo = async (features, uris, address) => {
+  const addVideo = async (features, video_id, address) => {
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       const signer = provider.getSigner();
@@ -236,8 +237,7 @@ export default function Upload({
         const transactionResponse = await contract.addVideo(
           address,
           title,
-          uris["player"],
-          uris["playback"],
+          video_id,
           features["swears"],
           features["topicKeys"],
           features["topicValues"],
@@ -295,10 +295,11 @@ export default function Upload({
       };
       const source_upload = await presignUrl(options);
       await uploadFile(blob, source_upload["presigned"]);
-      const video_url = await transcode(source_upload["id"]);
-      const uris = await waitForProgress(video_url, options);
+      const video_id = await transcode(source_upload["id"]);
+      // const uris = await waitForProgress(video_id, options);
+      console.log(video_id);
 
-      const tx = addVideo(extracted, uris, ownerAddress);
+      const tx = addVideo(extracted, video_id, ownerAddress);
 
       event.target.disabled = true;
     }
